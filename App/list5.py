@@ -18,20 +18,27 @@ While(condition, instructions) - condition should be instance of Expression clas
 If(condition, yes, no) - condition should be instance of Expression class. yes should be instance of Instruction class. no should be instance of Instruction class
                          yes is run when condition is true, no is run when condition is false.
 """
+
+
 class WrongTypeException(Exception):
     pass
+
 
 class WrongVariableFormatException(Exception):
     pass
 
+
 class OperandNotSupportedException(Exception):
     pass
+
 
 class DivisionByZeroException(Exception):
     pass
 
+
 class WrongInstanceException(Exception):
     pass
+
 
 class Expression:
     def __init__(self):
@@ -39,7 +46,7 @@ class Expression:
 
     def evaluate(self, variables):
         return self.evaluate(variables)
-        
+
     def __str__(self):
         return str(self)
 
@@ -47,7 +54,7 @@ class Expression:
         return Add(w1, w2)
 
     def __mul__(w1, w2):
-        return Times(w1, w2)    
+        return Times(w1, w2)
 
 
 class Constant(Expression):
@@ -55,7 +62,8 @@ class Constant(Expression):
         if not isinstance(value, int):
             raise WrongTypeException("Constant should be of type int")
         self.value = value
-    
+        self.class_name = "Constant"
+
     def evaluate(self, variables):
         return self.value
 
@@ -64,51 +72,53 @@ class Constant(Expression):
 
     def __add__(w1, w2):
         return Constant(w1.value + w2.value)
-    
+
     def __mul__(w1, w2):
         return Constant(w1.value * w2.value)
 
+
 class Variable(Expression):
     def __init__(self, name):
-        if not isinstance(name, str):            
-            raise WrongTypeException("Variable should be of type str")        
+        if not isinstance(name, str):
+            raise WrongTypeException("Variable should be of type str")
         for letter in name:
             if letter.isnumeric():
                 raise WrongVariableFormatException("Variable should consists of single letters")
-    
-        self.name = name        
+
+        self.name = name
+        self.class_name = "Variable"
 
     def evaluate(self, variables):
-        name = self.name  
+        name = self.name
 
-        for variable in variables:        
-            while variable in name:                
-                name = name.replace(variable, str(variables[variable]))                
+        for variable in variables:
+            while variable in name:
+                name = name.replace(variable, str(variables[variable]))
 
         return eval(name)
-    
-    def __str__(self):        
+
+    def __str__(self):
         return self.name
 
-    def __add__(w1, w2):                          
+    def __add__(w1, w2):
         return Variable(w1.name + " + " + w2.name)
 
     def __mul__(w1, w2):
         return Variable(w1.name + " * " + w2.name)
-        
-        
+
+
 class Add(Expression):
     def __init__(self, left, right):
         if not isinstance(left, Expression) or not isinstance(right, Expression):
             raise WrongInstanceException("Operands should be isntances of Expression")
         self.left = left
         self.right = right
-        
+        self.class_name = "Add"
 
     def evaluate(self, variables):
         return self.left.evaluate(variables) + self.right.evaluate(variables)
-    
-    def __str__(self):        
+
+    def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
             if isinstance(self.right, Variable) or isinstance(self.right, Constant):
                 return str(self.left) + " + " + str(self.right)
@@ -120,11 +130,12 @@ class Add(Expression):
             else:
                 return "(" + str(self.left) + ")" + " + " + "(" + str(self.right) + ")"
 
-    def __add__(w1, w2):                          
+    def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
 
     def __mul__(w1, w2):
         raise OperandNotSupportedException("You can't multiply operands")
+
 
 class Subtract(Expression):
     def __init__(self, left, right):
@@ -132,12 +143,12 @@ class Subtract(Expression):
             raise WrongInstanceException("Operands should be isntances of Expression")
         self.left = left
         self.right = right
-        
+        self.class_name = "Subtract"
 
     def evaluate(self, variables):
         return self.left.evaluate(variables) - self.right.evaluate(variables)
-    
-    def __str__(self):        
+
+    def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
             if isinstance(self.right, Variable) or isinstance(self.right, Constant):
                 return str(self.left) + " - " + str(self.right)
@@ -148,13 +159,13 @@ class Subtract(Expression):
                 return "(" + str(self.left) + ")" + " - " + str(self.right)
             else:
                 return "(" + str(self.left) + ")" + " - " + "(" + str(self.right) + ")"
-        
 
-    def __add__(w1, w2):                          
+    def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
 
     def __mul__(w1, w2):
         raise OperandNotSupportedException("You can't multiply operands")
+
 
 class Times(Expression):
     def __init__(self, left, right):
@@ -162,12 +173,12 @@ class Times(Expression):
             raise WrongInstanceException("Operands should be isntances of Expression")
         self.left = left
         self.right = right
-        
+        self.class_name = "Times"
 
     def evaluate(self, variables):
         return self.left.evaluate(variables) * self.right.evaluate(variables)
-    
-    def __str__(self):  
+
+    def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
             if isinstance(self.right, Variable) or isinstance(self.right, Constant):
                 return str(self.left) + " * " + str(self.right)
@@ -178,12 +189,13 @@ class Times(Expression):
                 return "(" + str(self.left) + ")" + " * " + str(self.right)
             else:
                 return "(" + str(self.left) + ")" + " * " + "(" + str(self.right) + ")"
-                
-    def __add__(w1, w2):                          
+
+    def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
 
     def __mul__(w1, w2):
         raise OperandNotSupportedException("You can't multiply operands")
+
 
 class Divide(Expression):
     def __init__(self, left, right):
@@ -191,13 +203,14 @@ class Divide(Expression):
             raise WrongInstanceException("Operands should be isntances of Expression")
         self.left = left
         self.right = right
-        
+        self.class_name = "Divide"
 
     def evaluate(self, variables):
-        if self.right.evaluate(variables) == 0: raise DivisionByZeroException("Division by zero encountered")
+        if self.right.evaluate(variables) == 0:
+            raise DivisionByZeroException("Division by zero encountered")
         return self.left.evaluate(variables) / self.right.evaluate(variables)
-    
-    def __str__(self):  
+
+    def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
             if isinstance(self.right, Variable) or isinstance(self.right, Constant):
                 return str(self.left) + " / " + str(self.right)
@@ -209,7 +222,7 @@ class Divide(Expression):
             else:
                 return "(" + str(self.left) + ")" + " / " + "(" + str(self.right) + ")"
 
-    def __add__(w1, w2):                          
+    def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
 
     def __mul__(w1, w2):
@@ -222,16 +235,20 @@ class Instruction():
             raise WrongInstanceException()
         self.first = first
         self.second = second
+        self.class_name = "Instruction"
 
     def run(self, variables):
         self.first.run(variables)
-        
-        if self.second is None: return
+
+        if self.second is None:
+            return
         self.second.run(variables)
 
     def __str__(self):
-        if self.second is None: return str(self.first)
+        if self.second is None:
+            return str(self.first)
         return str(self.first) + "\n" + str(self.second)
+
 
 class Assign(Instruction):
     def __init__(self, name, value):
@@ -239,12 +256,14 @@ class Assign(Instruction):
             raise WrongInstanceException()
         self.name = name
         self.value = value
+        self.class_name = "Assign"
 
-    def run(self, variables):                
-        variables[str(self.name)] = (int(str(self.value.evaluate(variables))))        
-    
+    def run(self, variables):
+        variables[str(self.name)] = (int(str(self.value.evaluate(variables))))
+
     def __str__(self):
         return str(self.name) + " = " + str(self.value)
+
 
 class While(Instruction):
     def __init__(self, condition, instructions):
@@ -252,12 +271,15 @@ class While(Instruction):
             raise WrongInstanceException()
         self.condition = condition
         self.instructions = instructions
-    
-    def run(self, variables):                
-        while self.condition.evaluate(variables) != 0:                                        
-            self.instructions.run(variables)        
+        self.class_name = "While"
+
+    def run(self, variables):
+        while self.condition.evaluate(variables) != 0:
+            self.instructions.run(variables)
+
     def __str__(self):
         return "while " + str(self.condition) + " != 0:" + "\n" + "    " + str(self.instructions)
+
 
 class If(Instruction):
     def __init__(self, condition, yes, no):
@@ -266,8 +288,9 @@ class If(Instruction):
         self.condition = condition
         self.yes = yes
         self.no = no
-    
-    def run(self, variables):                
+        self.class_name = "If"
+
+    def run(self, variables):
         if self.condition.evaluate(variables) != 0:
             self.yes.run(variables)
         else:
@@ -277,78 +300,27 @@ class If(Instruction):
         return "if " + str(self.condition) + " != 0:\n" + "    " + str(self.yes) + "\nelse:\n" + "    " + str(self.no)
 
 
-#Testing expressions
-print("\nExpressions")
-exp1 = Times(Add(Variable("x"), Constant(2)), Variable("y"))
-print(exp1)
-print(exp1.evaluate({"x":1, "y":21}))
-exp1 = Times(Divide(Variable("x"), Constant(2)), Variable("y"))
-print(exp1)
-print(exp1.evaluate({"x":1, "y":21}))
-
-# x = Constant(3)
-# y = Constant(5)
-# z = x + y
-# print(z)
-# print(z.evaluate({}))
-
-exp1 = Subtract(Add(Constant(2), Times(Variable("x"), Constant(7))),
-                Add(Times(Variable("y"), Constant(3)), Constant(5)))
-print(exp1)
-print(exp1.evaluate({"x":0.1, "y":100}))
-
-
-# exp1 = Subtract(Add(Constant(2), Subtract(Variable("x"), Constant(7))),
-#                 Add(Divide(Variable("y"), Constant(3)), Constant(5)))
-# print(exp1)
-# print(exp1.evaluate({"x":0.1, "y":100}))
-# print(exp1.evaluate({"x":0.2, "y":100}))
-
-
-exp1 = Divide(Times(Subtract(Variable("x"), Constant(1)),
-                    Variable("x")), 
-                Constant(2))
-print(exp1)
-print(exp1.evaluate({"x":11}))
-#Testing programming expressions
-print("\nProgramming expressions")
-input_and_output = {}
-inst = Instruction(Assign(Variable("x"), Constant(3)), Assign(Variable("x"), Add(Variable("x"), Constant(1))))
-print(inst)
-inst.run(input_and_output)
-print(input_and_output["x"])
-
-# input_and_output = {}
-# inst = Instruction(Assign(Variable("x"), Constant(4)))
-# print(inst)
-# inst.run(input_and_output)
-# print(input_and_output["x"])
-
-inst = Instruction(
-    Assign(Variable("x"), Constant(-10)), 
-    While(
-        Add(Variable("x"), Constant(5)), 
-        Assign(Variable("x"), Add(Variable("x"), Constant(1)))))
-
-print(inst)
-input_and_output = {}
-inst.run(input_and_output)
-print(input_and_output["x"])
-
-# inst = Instruction(Assign(Variable("x"), Constant(-2)), 
-#                     If(Add(Variable("x"), Constant(4)), 
-#                         Assign(Variable("x"), Constant(3)), 
-#                         Assign(Variable("x"), Constant(100))))
-# print(inst)
-# input_and_output = {}
-# inst.run(input_and_output)
-# print(input_and_output["x"])
-
-inst = Instruction(Assign(Variable("x"), Constant(-4)), 
-                    If(Variable("x"), 
-                        Assign(Variable("x"), Constant(3)), 
-                        Assign(Variable("x"), Constant(100))))
-print(inst)
-input_and_output = {}
-inst.run(input_and_output)
-print(input_and_output["x"])
+def encode_expression(e):
+    if e is None:
+        return "_n"
+    if e.class_name == "Constant":
+        return "_c" + str(e) + ":"
+    if e.class_name == "Variable":
+        return "_v" + str(e) + ":"
+    if e.class_name == "Instruction":
+        return "_I" + encode_expression(e.first) + "," + encode_expression(e.second)
+    if e.class_name == "Assign":
+        return "_=" + encode_expression(e.value)
+    if e.class_name == "While":
+        return "_w" + encode_expression(e.condition) + "," + encode_expression(e.instructions)
+    if e.class_name == "If":
+        return "_i" + encode_expression(e.condition) + "," + encode_expression(e.yes) + "," + encode_expression(e.no)
+    if e.class_name == "Add":
+        return "_+" + encode_expression(e.left) + "," + encode_expression(e.right)
+    if e.class_name == "Subtract":
+        return "_-" + encode_expression(e.left) + "," + encode_expression(e.right)
+    if e.class_name == "Times":
+        return "_*" + encode_expression(e.left) + "," + encode_expression(e.right)
+    if e.class_name == "Divide":
+        return "_/" + encode_expression(e.left) + "," + encode_expression(e.right)            
+    raise Exception("You can't encod" + str(typeof(e)))
