@@ -41,7 +41,7 @@ class WrongInstanceException(Exception):
 
 
 class Expression:
-    def __init__(self):
+    def __init__(self):        
         pass
 
     def evaluate(self, variables):
@@ -63,6 +63,7 @@ class Constant(Expression):
             raise WrongTypeException("Constant should be of type int")
         self.value = value
         self.class_name = "Constant"
+        self.decoding_helper = -1
 
     def evaluate(self, variables):
         return self.value
@@ -87,6 +88,7 @@ class Variable(Expression):
 
         self.name = name
         self.class_name = "Variable"
+        self.decoding_helper = -1
 
     def evaluate(self, variables):
         name = self.name
@@ -114,6 +116,7 @@ class Add(Expression):
         self.left = left
         self.right = right
         self.class_name = "Add"
+        self.decoding_helper = -1
 
     def evaluate(self, variables):
         return self.left.evaluate(variables) + self.right.evaluate(variables)
@@ -144,6 +147,7 @@ class Subtract(Expression):
         self.left = left
         self.right = right
         self.class_name = "Subtract"
+        self.decoding_helper = -1
 
     def evaluate(self, variables):
         return self.left.evaluate(variables) - self.right.evaluate(variables)
@@ -174,6 +178,7 @@ class Times(Expression):
         self.left = left
         self.right = right
         self.class_name = "Times"
+        self.decoding_helper = -1
 
     def evaluate(self, variables):
         return self.left.evaluate(variables) * self.right.evaluate(variables)
@@ -204,6 +209,7 @@ class Divide(Expression):
         self.left = left
         self.right = right
         self.class_name = "Divide"
+        self.decoding_helper = -1
 
     def evaluate(self, variables):
         if self.right.evaluate(variables) == 0:
@@ -236,6 +242,7 @@ class Instruction():
         self.first = first
         self.second = second
         self.class_name = "Instruction"
+        self.decoding_helper = -1
 
     def run(self, variables):
         self.first.run(variables)
@@ -257,6 +264,7 @@ class Assign(Instruction):
         self.name = name
         self.value = value
         self.class_name = "Assign"
+        self.decoding_helper = -1
 
     def run(self, variables):
         variables[str(self.name)] = (int(str(self.value.evaluate(variables))))
@@ -272,6 +280,7 @@ class While(Instruction):
         self.condition = condition
         self.instructions = instructions
         self.class_name = "While"
+        self.decoding_helper = -1
 
     def run(self, variables):
         while self.condition.evaluate(variables) != 0:
@@ -289,6 +298,7 @@ class If(Instruction):
         self.yes = yes
         self.no = no
         self.class_name = "If"
+        self.decoding_helper = -1
 
     def run(self, variables):
         if self.condition.evaluate(variables) != 0:
@@ -300,27 +310,109 @@ class If(Instruction):
         return "if " + str(self.condition) + " != 0:\n" + "    " + str(self.yes) + "\nelse:\n" + "    " + str(self.no)
 
 
+# decoding helper w klasach !!!!!! None, variable i constant sa najbardziej 
+# abstrakcyjne
 def encode_expression(e):
     if e is None:
-        return "_n"
+        return "_n:"
     if e.class_name == "Constant":
         return "_c" + str(e) + ":"
     if e.class_name == "Variable":
         return "_v" + str(e) + ":"
     if e.class_name == "Instruction":
-        return "_I" + encode_expression(e.first) + "," + encode_expression(e.second)
+        return "_I" + encode_expression(e.first) + encode_expression(e.second)
     if e.class_name == "Assign":
-        return "_=" + encode_expression(e.value)
+        return "_=" + str(e.name) + ":" + encode_expression(e.value)
     if e.class_name == "While":
-        return "_w" + encode_expression(e.condition) + "," + encode_expression(e.instructions)
+        return "_w" + encode_expression(e.condition) + encode_expression(e.instructions)
     if e.class_name == "If":
-        return "_i" + encode_expression(e.condition) + "," + encode_expression(e.yes) + "," + encode_expression(e.no)
+        return "_i" + encode_expression(e.condition) + encode_expression(e.yes) + encode_expression(e.no)
     if e.class_name == "Add":
-        return "_+" + encode_expression(e.left) + "," + encode_expression(e.right)
+        return "_+" + encode_expression(e.left) + encode_expression(e.right)
     if e.class_name == "Subtract":
-        return "_-" + encode_expression(e.left) + "," + encode_expression(e.right)
+        return "_-" + encode_expression(e.left) + encode_expression(e.right)
     if e.class_name == "Times":
-        return "_*" + encode_expression(e.left) + "," + encode_expression(e.right)
+        return "_*" + encode_expression(e.left) + encode_expression(e.right)
     if e.class_name == "Divide":
-        return "_/" + encode_expression(e.left) + "," + encode_expression(e.right)            
-    raise Exception("You can't encod" + str(typeof(e)))
+        return "_/" + encode_expression(e.left) + encode_expression(e.right)            
+    raise Exception("You can't encode " + str(typeof(e)))
+    
+
+def decode_expression(code):
+    # if code[:2] == "_n":
+    #     pass
+    if code[:2] == "_c":        
+        end = code[2:].find(":")
+        if end < 0:
+            raise Exception("Decoding helper was not found")
+        end += 2        
+        value = int(code[2:end])        
+        c = Constant(value)
+        c.decoding_helper = end + 1        
+        return c
+
+    if code[:2] == "_v":
+        # print(code)
+        end = code[2:].find(":")
+        if end < 0:
+            raise Exception("Decoding helper was not found")
+        end += 2
+        name = code[2:end]
+        v = Variable(name)
+        v.decoding_helper = end + 1
+        return v
+
+    if code[:2] == "_I":
+        first = decode_expression(code[2:])        
+        second = decode_expression(code[2 + first.decoding_helper:])        
+        i = Instruction(first, second)
+        i.decoding_helper = first.decoding_helper + second.decoding_helper + 2
+        return i            
+    if code[:2] == "_=":        
+        end = code[2:].find(":")
+        if end < 0:
+            raise Exception("Assign's name was not found")
+        end += 2
+        name = Variable(code[2:end])
+        end += 1
+        value = decode_expression(code[end:])        
+        a = Assign(name, value)
+        a.decoding_helper = end + value.decoding_helper
+        return a        
+    # if e.class_name == "While":
+    #     pass
+    if code[:2] == "_i":        
+        condition = decode_expression(code[2:])
+        yes = decode_expression(code[2 + condition.decoding_helper:])        
+        no = decode_expression(code[2 + condition.decoding_helper + yes.decoding_helper:])        
+        i = If(condition, yes, no)
+        i.decoding_helper = condition.decoding_helper + yes.decoding_helper + no.decoding_helper + 2
+        return i
+
+    # if e.class_name == "Add":
+    #     pass
+    # if e.class_name == "Subtract":
+    #     pass
+    # if e.class_name == "Times":
+    #     pass
+    # if e.class_name == "Divide":
+        # pass
+
+exp1 = Divide(Times(Subtract(Variable("x"), Constant(1)),
+                    Variable("x")), 
+                Constant(2))
+print(str(exp1))
+
+print(encode_expression(exp1))
+    
+    
+inst = Instruction(Assign(Variable("x"), Constant(-4)), 
+                    If(Variable("x"), 
+                        Assign(Variable("x"), Constant(3)), 
+                        Assign(Variable("x"), Constant(100))))
+print(str(inst))
+print(encode_expression(inst))
+
+inst = decode_expression(encode_expression(inst))
+print(str(inst))
+
