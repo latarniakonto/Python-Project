@@ -309,9 +309,6 @@ class If(Instruction):
     def __str__(self):
         return "if " + str(self.condition) + " != 0:\n" + "    " + str(self.yes) + "\nelse:\n" + "    " + str(self.no)
 
-
-# decoding helper w klasach !!!!!! None, variable i constant sa najbardziej 
-# abstrakcyjne
 def encode_expression(e):
     if e is None:
         return "_n:"
@@ -351,8 +348,7 @@ def decode_expression(code):
         c.decoding_helper = end + 1        
         return c
 
-    if code[:2] == "_v":
-        # print(code)
+    if code[:2] == "_v":        
         end = code[2:].find(":")
         if end < 0:
             raise Exception("Decoding helper was not found")
@@ -379,8 +375,12 @@ def decode_expression(code):
         a = Assign(name, value)
         a.decoding_helper = end + value.decoding_helper
         return a        
-    # if e.class_name == "While":
-    #     pass
+    if code[:2] == "_w":
+        condition = decode_expression(code[2:])
+        instructions = decode_expression(code[2 + condition.decoding_helper:])
+        w = While(condition, instructions)
+        w.decoding_helper = condition.decoding_helper + instructions.decoding_helper + 2
+        return w
     if code[:2] == "_i":        
         condition = decode_expression(code[2:])
         yes = decode_expression(code[2 + condition.decoding_helper:])        
@@ -389,14 +389,33 @@ def decode_expression(code):
         i.decoding_helper = condition.decoding_helper + yes.decoding_helper + no.decoding_helper + 2
         return i
 
-    # if e.class_name == "Add":
-    #     pass
-    # if e.class_name == "Subtract":
-    #     pass
-    # if e.class_name == "Times":
-    #     pass
-    # if e.class_name == "Divide":
-        # pass
+    if code[:2] == "_+":
+        left = decode_expression(code[2:])
+        right = decode_expression(code[2 + left.decoding_helper:])
+        a = Add(left, right)
+        a.decoding_helper = left.decoding_helper + right.decoding_helper + 2
+        return a
+        
+    if code[:2] == "_-":
+        left = decode_expression(code[2:])
+        right = decode_expression(code[2 + left.decoding_helper:])
+        s = Subtract(left, right)
+        s.decoding_helper = left.decoding_helper + right.decoding_helper + 2
+        return s
+
+    if code[:2] == "_*":
+        left = decode_expression(code[2:])
+        right = decode_expression(code[2 + left.decoding_helper:])
+        t = Times(left, right)
+        t.decoding_helper = left.decoding_helper + right.decoding_helper + 2
+        return t
+
+    if code[:2] == "_/":
+        left = decode_expression(code[2:])
+        right = decode_expression(code[2 + left.decoding_helper:])
+        d = Divide(left, right)
+        d.decoding_helper = left.decoding_helper + right.decoding_helper + 2
+        return d
 
 exp1 = Divide(Times(Subtract(Variable("x"), Constant(1)),
                     Variable("x")), 
@@ -404,6 +423,9 @@ exp1 = Divide(Times(Subtract(Variable("x"), Constant(1)),
 print(str(exp1))
 
 print(encode_expression(exp1))
+
+exp1 = decode_expression(encode_expression(exp1))
+print(str(exp1))
     
     
 inst = Instruction(Assign(Variable("x"), Constant(-4)), 
