@@ -336,6 +336,7 @@ def encode_expression(e):
     
 
 def decode_expression(code):
+    # TODO
     # if code[:2] == "_n":
     #     pass
     if code[:2] == "_c":        
@@ -427,7 +428,7 @@ print(encode_expression(exp1))
 exp1 = decode_expression(encode_expression(exp1))
 print(str(exp1))
     
-    
+
 inst = Instruction(Assign(Variable("x"), Constant(-4)), 
                     If(Variable("x"), 
                         Assign(Variable("x"), Constant(3)), 
@@ -438,3 +439,14 @@ print(encode_expression(inst))
 inst = decode_expression(encode_expression(inst))
 print(str(inst))
 
+inst = Instruction(
+    Assign(Variable("x"), Constant(-10)), 
+    While(
+        Add(Variable("x"), Constant(5)), 
+        Assign(Variable("x"), Add(Variable("x"), Constant(1)))))
+print(str(inst))
+print(encode_expression(inst))
+inst = decode_expression(encode_expression(inst))
+print(str(inst))
+
+inst = Instruction(Assign(Variable("x"), Constant(3)), Assign(Variable("x"), Add(Variable("x"), Constant(1))))
