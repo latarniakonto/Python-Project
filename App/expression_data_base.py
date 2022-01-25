@@ -26,6 +26,11 @@ class ArithmeticExpression(Base):
     @validates("expression_encoding")
     def validate_expression_encoding(self, key, value):
         assert value is not None
+        assert self.session is not None
+        for row in self.session.query(ArithmeticExpression):            
+            if str(row.expression_encoding) == str(value):
+                assert False
+
         return value
 
 
@@ -42,6 +47,12 @@ class ProgrammingExpression(Base):
     @validates("expression_encoding")
     def validate_expression_encoding(self, key, value):
         assert value is not None
+        assert self.session is not None
+        for row in self.session.query(ProgrammingExpression):
+            print(row)
+            if(str(row.expression_encoding) == str(value)):
+                assert False
+
         return value
 
 
@@ -73,7 +84,7 @@ def list_programming_expression(session):
         print(row_tuple)
 
 
-def list_programming_expression(session):
+def list_arithemitc_expression(session):
     for row in session.query(ArithmeticExpression):
         row_tuple = (row.id, row.expression_encoding)
         print(row_tuple)
