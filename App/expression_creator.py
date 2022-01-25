@@ -10,9 +10,7 @@ from expression_data_base import (
     ArithmeticExpression,
     ProgrammingExpression,
     add_arithmetic_expression,
-    add_programming_expression,
-    list_programming_expression,
-    list_arithemitc_expression
+    add_programming_expression,    
 )
 
 
@@ -25,16 +23,12 @@ if __name__ == "__main__":
             Add(Variable("x"), Constant(5)), 
             Assign(Variable("x"), Add(Variable("x"), Constant(1)))))
     inst_code = encode_expression(inst)
-    add_programming_expression(inst_code, session)
-    list_programming_expression(session)
+    add_programming_expression(inst_code, session)    
 
     exp1 = Divide(Times(Subtract(Variable("x"), Constant(1)),
                     Variable("x")), 
                 Constant(2))
     exp1_code = encode_expression(exp1)
-    add_arithmetic_expression(exp1_code, session)
-    list_arithemitc_expression(session)    
-    
-    
-
-
+    add_arithmetic_expression(exp1_code, session)    
+    session.commit()
+    session.close() 
