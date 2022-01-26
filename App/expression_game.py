@@ -46,7 +46,7 @@ def get_expressions_lines():
     return expressions_lines
 
 
-def print_expressions():
+def display_expressions():
     pos_x = 30
     pos_y = 40
 
@@ -57,7 +57,41 @@ def print_expressions():
             screen.blit(lines[line],(pos_x, pos_y + ((e_iter + line) * 2 * font_size)))
         e_iter += len(lines)
 
+
+def display_flickering_dots():    
+    global first_dot, second_dot, third_dot, fourth_dot
         
+    if first_dot is False:
+        first_dot = True
+        screen.blit(dots[0], (30, 740))
+    elif second_dot is False:
+        second_dot = True
+        screen.blit(dots[0], (46, 740))
+    elif third_dot is False:
+        third_dot = True
+        screen.blit(dots[0], (62, 740))
+    elif fourth_dot is False:
+        fourth_dot = True
+
+    if fourth_dot is True:
+        first_dot = False
+        screen.blit(dots[1], (30, 700))
+        second_dot = False
+        screen.blit(dots[1], (46, 740))
+        third_dot = False
+        screen.blit(dots[1], (62, 740))
+        fourth_dot = False
+        return
+
+    if first_dot is True:
+        screen.blit(dots[0], (30, 740))
+    if second_dot is True:
+        screen.blit(dots[0], (46, 740))
+    if third_dot is True:
+        screen.blit(dots[0], (62, 740))
+
+
+
 ## def start():
 database_session = init()
 pygame.init()
@@ -67,7 +101,13 @@ font_size = 12
 font = pygame.font.Font("./Font/expression_font.ttf", font_size)
 expressions = get_expressions_from_data_base(database_session)
 expressions_lines = get_expressions_lines()
-
+dots = [font.render("*", True, (0, 255, 0)),        
+        font.render(" ", True, (0, 255, 0))]
+first_dot = False
+second_dot = False
+third_dot = False
+fourth_dot = False
+no_input = True
 
 ## def update():
 while running:
@@ -81,9 +121,15 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    print_expressions()
+    display_expressions()
+    if no_input is True:
+        if pygame.time.get_ticks() % 240 == 0:
+            display_flickering_dots()
+        else: 
+            continue
     # Flip the display
     pygame.display.flip()
 
+# def on_exit():
 pygame.quit()
 database_session.close()
