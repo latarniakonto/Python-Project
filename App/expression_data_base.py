@@ -48,8 +48,7 @@ class ProgrammingExpression(Base):
     def validate_expression_encoding(self, key, value):
         assert value is not None
         assert self.session is not None
-        for row in self.session.query(ProgrammingExpression):
-            print(row)
+        for row in self.session.query(ProgrammingExpression):            
             if(str(row.expression_encoding) == str(value)):
                 assert False
 
