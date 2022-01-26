@@ -242,7 +242,7 @@ class Instruction():
         self.first = first
         self.second = second
         self.class_name = "Instruction"
-        self.decoding_helper = -1
+        self.decoding_helper = -1        
 
     def run(self, variables):
         self.first.run(variables)
@@ -251,10 +251,11 @@ class Instruction():
             return
         self.second.run(variables)
 
-    def __str__(self):
+    def __str__(self, counter=0):        
         if self.second is None:
-            return str(self.first)
-        return str(self.first) + "\n" + str(self.second)
+            return self.first.__str__(counter)
+        return self.first.__str__(counter)  + "\n" \
+               + self.second.__str__(counter)
 
 
 class Assign(Instruction):
@@ -265,12 +266,14 @@ class Assign(Instruction):
         self.value = value
         self.class_name = "Assign"
         self.decoding_helper = -1
+        self.indent = "    "
 
     def run(self, variables):
         variables[str(self.name)] = (int(str(self.value.evaluate(variables))))
 
-    def __str__(self):
-        return str(self.name) + " = " + str(self.value)
+    def __str__(self, counter=0):
+        self.indent = self.indent * counter
+        return self.indent + str(self.name) + " = " + str(self.value)
 
 
 class While(Instruction):
@@ -281,13 +284,16 @@ class While(Instruction):
         self.instructions = instructions
         self.class_name = "While"
         self.decoding_helper = -1
+        self.indent = "    "
 
     def run(self, variables):
         while self.condition.evaluate(variables) != 0:
             self.instructions.run(variables)
 
-    def __str__(self):
-        return "while " + str(self.condition) + " != 0:" + "\n" + "    " + str(self.instructions)
+    def __str__(self, counter):
+        self.indent = self.indent * counter
+        return self.indent + "while " + str(self.condition) + " != 0:" + "\n" \
+               + self.instructions.__str__(counter + 1)
 
 
 class If(Instruction):
@@ -299,6 +305,7 @@ class If(Instruction):
         self.no = no
         self.class_name = "If"
         self.decoding_helper = -1
+        self.indent = "    "
 
     def run(self, variables):
         if self.condition.evaluate(variables) != 0:
@@ -306,5 +313,9 @@ class If(Instruction):
         else:
             self.no.run(variables)
 
-    def __str__(self):
-        return "if " + str(self.condition) + " != 0:\n" + "    " + str(self.yes) + "\nelse:\n" + "    " + str(self.no)
+    def __str__(self, counter=0):
+        self.indent = self.indent * counter
+        return self.indent + "if " + str(self.condition) + " != 0:\n" \
+               + self.yes.__str__(counter + 1)  \
+               + "\n" + self.indent + "else:\n" \
+               + self.no.__str__(counter + 1)

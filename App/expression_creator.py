@@ -4,7 +4,7 @@ from expression import (
     Add, Subtract, Times, Divide,
     Instruction, Assign, While, If
 )
-from expression_formatter import encode_expression
+from expression_formatter import decode_expression, encode_expression
 from expression_data_base import (
     init,
     ArithmeticExpression,
@@ -23,12 +23,26 @@ if __name__ == "__main__":
             Add(Variable("x"), Constant(5)), 
             Assign(Variable("x"), Add(Variable("x"), Constant(1)))))
     inst_code = encode_expression(inst)
-    add_programming_expression(inst_code, session)    
+    session = add_programming_expression(inst_code, session)
+    print(inst)
 
     exp1 = Divide(Times(Subtract(Variable("x"), Constant(1)),
                     Variable("x")), 
                 Constant(2))
     exp1_code = encode_expression(exp1)
-    add_arithmetic_expression(exp1_code, session)    
+    print(exp1)
+    session = add_arithmetic_expression(exp1_code, session)
+
+    inst1 = Instruction(Assign(Variable("x"), Constant(-4)), 
+                    If(Variable("x"), 
+                        Instruction(
+        Assign(Variable("x"), Constant(-10)), 
+        While(
+            Add(Variable("x"), Constant(5)), 
+            Assign(Variable("x"), Add(Variable("x"), Constant(1))))),
+                        Assign(Variable("x"), Constant(100))))
+    print(inst1)
+    inst_code1 = encode_expression(inst1)
+    session = add_programming_expression(inst_code1, session)
     session.commit()
     session.close() 
