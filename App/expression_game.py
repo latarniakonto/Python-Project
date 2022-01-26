@@ -1,4 +1,5 @@
 # Import and initialize the pygame library
+from numpy import False_
 import pygame
 from expression import (
     Constant, Variable,
@@ -11,6 +12,7 @@ from expression_data_base import (
     ArithmeticExpression,
     ProgrammingExpression,        
 )
+from expression_game_input import get_user_input
 
 
 def get_expressions_from_data_base(session):    
@@ -90,6 +92,23 @@ def display_flickering_dots():
     if third_dot is True:
         screen.blit(dots[0], (62, 740))
 
+def display_input():
+    global first_dot, second_dot, third_dot, fourth_dot
+
+    if first_dot is True:
+        first_dot = False
+        screen.blit(dots[0], (30, 740))
+    if second_dot is True:
+        second_dot = False
+        screen.blit(dots[0], (46, 740))
+    if third_dot is True:
+        third_dot = False
+        screen.blit(dots[0], (62, 740))
+    if fourth_dot is True:
+        fourth_dot = False
+
+    input = font.render(no_input, True, (0, 255, 0))
+    screen.blit(input, (30, 724))
 
 
 ## def start():
@@ -107,7 +126,7 @@ first_dot = False
 second_dot = False
 third_dot = False
 fourth_dot = False
-no_input = True
+no_input = ""
 
 ## def update():
 while running:
@@ -120,13 +139,18 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        no_input += get_user_input(event)
 
     display_expressions()
-    if no_input is True:
+    if no_input == "":
         if pygame.time.get_ticks() % 240 == 0:
             display_flickering_dots()
         else: 
             continue
+    else:        
+        display_input()
+
+
     # Flip the display
     pygame.display.flip()
 
