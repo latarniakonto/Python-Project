@@ -33,7 +33,7 @@ def print_expressions():
         e_text = str(e)        
         lines = []        
         line = ""
-        # pygame doesn't support newlines :(, so here is solution for that
+        # pygame font doesn't support newlines :(, so here is solution for that
         for char in e_text:            
             if char == '\n':                
                 lines.append(font.render(line, True, (0, 255, 0)))
