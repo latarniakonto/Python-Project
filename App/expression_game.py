@@ -55,16 +55,14 @@ def print_expressions():
         # pygame font doesn't support newlines :(, so here is solution for that                
         for line in range(len(lines)):
             screen.blit(lines[line],(pos_x, pos_y + ((e_iter + line) * 2 * font_size)))
-        e_iter = len(lines)
+        e_iter += len(lines)
 
         
 
-
+## def start():
 database_session = init()
 pygame.init()
-# Set up the drawing window
 screen = pygame.display.set_mode([1000, 1000])
-# Run until the user asks to quit
 running = True
 font_size = 12
 font = pygame.font.Font("./Font/expression_font.ttf", font_size)
