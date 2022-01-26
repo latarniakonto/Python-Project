@@ -58,7 +58,6 @@ def print_expressions():
         e_iter += len(lines)
 
         
-
 ## def start():
 database_session = init()
 pygame.init()
@@ -69,6 +68,8 @@ font = pygame.font.Font("./Font/expression_font.ttf", font_size)
 expressions = get_expressions_from_data_base(database_session)
 expressions_lines = get_expressions_lines()
 
+
+## def update():
 while running:
 
     # Fill the background with white
@@ -85,3 +86,4 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
+database_session.close()
