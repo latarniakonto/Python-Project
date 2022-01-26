@@ -12,6 +12,7 @@ from expression_data_base import (
     ProgrammingExpression,        
 )
 
+
 def get_expressions_from_data_base(session):    
     expressions = []
 
@@ -24,14 +25,12 @@ def get_expressions_from_data_base(session):
 
     return expressions
 
-def print_expressions():
-    pos_x = 30
-    pos_y = 40          
 
-    e_iter = 0    
+def get_expressions_lines():
+    expressions_lines = [[]]
     for e in expressions: 
-        e_text = str(e)        
-        lines = []        
+        e_text = str(e)     
+        lines = []   
         line = ""
         # pygame font doesn't support newlines :(, so here is solution for that
         for char in e_text:            
@@ -41,11 +40,22 @@ def print_expressions():
             else:
                 line += char
         if line != "":
-            lines.append(font.render(line, True, (0, 255, 0)))                        
-        
-        for line in range(len(lines)):            
+            lines.append(font.render(line, True, (0, 255, 0)))
+        expressions_lines.append(lines)
+    
+    return expressions_lines
+
+
+def print_expressions():
+    pos_x = 30
+    pos_y = 40
+
+    e_iter = 0        
+    for lines in expressions_lines:                 
+        # pygame font doesn't support newlines :(, so here is solution for that                
+        for line in range(len(lines)):
             screen.blit(lines[line],(pos_x, pos_y + ((e_iter + line) * 2 * font_size)))
-        e_iter = len(lines) + 1
+        e_iter = len(lines)
 
         
 
@@ -59,6 +69,7 @@ running = True
 font_size = 12
 font = pygame.font.Font("./Font/expression_font.ttf", font_size)
 expressions = get_expressions_from_data_base(database_session)
+expressions_lines = get_expressions_lines()
 
 while running:
 
