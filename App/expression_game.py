@@ -1,5 +1,4 @@
 # Import and initialize the pygame library
-from numpy import False_
 import pygame
 from expression import (
     Constant, Variable,
@@ -108,7 +107,7 @@ def display_input():
         fourth_dot = False
 
     display_input = font.render(input, True, (0, 255, 0))
-    screen.blit(display_input, (30, 724))
+    screen.blit(display_input, (30, 740))
 
 
 ## def start():
@@ -127,6 +126,7 @@ second_dot = False
 third_dot = False
 fourth_dot = False
 input = ""
+input_image = pygame.image.load("./Font/input_sprite.png")
 
 ## def update():
 while running:
@@ -135,6 +135,7 @@ while running:
     screen.fill((0, 0, 0))
 
     # Did the user click the window close button?
+    screen.blit(input_image, (25,740))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
