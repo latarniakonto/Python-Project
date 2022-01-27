@@ -1,5 +1,3 @@
-
-
 class Button():
     def __init__(self, image, x_coord, y_coord, text, font):
         self.image = image

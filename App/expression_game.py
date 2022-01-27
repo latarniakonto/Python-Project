@@ -126,7 +126,7 @@ second_dot = False
 third_dot = False
 fourth_dot = False
 input = ""
-input_image = pygame.image.load("./Font/input_sprite.png")
+input_image = pygame.image.load("./Sprites/input_sprite.png")
 
 ## def update():
 while running:
