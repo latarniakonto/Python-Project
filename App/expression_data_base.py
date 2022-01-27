@@ -7,7 +7,7 @@ import argparse
 from sqlalchemy.orm.mapper import validates
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
-
+from expression_formatter import decode_expression
 # Event for handling cascade DELETE of foreign keys.
 
 Base = declarative_base()
@@ -109,3 +109,15 @@ def delete_arithmetic_expression(id, expression_encoding, session):
     session.query(ProgrammingExpression).filter_by(id=id,
                                                    expression_encoding=expression_encoding).delete()
     return session
+
+def get_expressions_from_data_base(session):    
+    expressions = []
+
+    for row in session.query(ArithmeticExpression):
+        e = decode_expression(row.expression_encoding)        
+        expressions.append(e)
+    for row in session.query(ProgrammingExpression):        
+        e = decode_expression(row.expression_encoding)        
+        expressions.append(e)
+
+    return expressions

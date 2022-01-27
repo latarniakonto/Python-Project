@@ -5,26 +5,14 @@ from expression import (
     Add, Subtract, Times, Divide,
     Instruction, Assign, While, If
 )
-from expression_formatter import decode_expression
 from expression_data_base import (
     init,
     ArithmeticExpression,
-    ProgrammingExpression,        
+    ProgrammingExpression,
+    get_expressions_from_data_base
+
 )
 from expression_game_input import get_user_input
-
-
-def get_expressions_from_data_base(session):    
-    expressions = []
-
-    for row in session.query(ArithmeticExpression):
-        e = decode_expression(row.expression_encoding)        
-        expressions.append(e)
-    for row in session.query(ProgrammingExpression):        
-        e = decode_expression(row.expression_encoding)        
-        expressions.append(e)
-
-    return expressions
 
 
 def get_expressions_lines():
