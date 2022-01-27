@@ -107,8 +107,8 @@ def display_input():
     if fourth_dot is True:
         fourth_dot = False
 
-    input = font.render(no_input, True, (0, 255, 0))
-    screen.blit(input, (30, 724))
+    display_input = font.render(input, True, (0, 255, 0))
+    screen.blit(display_input, (30, 724))
 
 
 ## def start():
@@ -120,13 +120,13 @@ font_size = 12
 font = pygame.font.Font("./Font/expression_font.ttf", font_size)
 expressions = get_expressions_from_data_base(database_session)
 expressions_lines = get_expressions_lines()
-dots = [font.render("*", True, (0, 255, 0)),        
+dots = [font.render(".", True, (0, 255, 0)),        
         font.render(" ", True, (0, 255, 0))]
 first_dot = False
 second_dot = False
 third_dot = False
 fourth_dot = False
-no_input = ""
+input = ""
 
 ## def update():
 while running:
@@ -139,10 +139,10 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        no_input += get_user_input(event)
+        input = get_user_input(event, input)
 
     display_expressions()
-    if no_input == "":
+    if input == "":
         if pygame.time.get_ticks() % 240 == 0:
             display_flickering_dots()
         else: 
