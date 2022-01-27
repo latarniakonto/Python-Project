@@ -68,7 +68,7 @@ def get_user_input(event, input):
         elif event.key == pygame.K_o:
             input += "o"
         elif event.key == pygame.K_p:
-            input += "q"
+            input += "p"
         elif event.key == pygame.K_q:
             input += "q"
         elif event.key == pygame.K_r:
