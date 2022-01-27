@@ -15,6 +15,8 @@ class Button():
         screen.blit(self.display_text, self.text_rect)
 
     def is_clicked(self, position):
-        return (position[0] in range(self.rect.left, self.rect.right) and
-                position[1] in range(self.rect.top, self.rect.bottom))
+        return (position[0] in range(self.image_rect.left, 
+                                     self.image_rect.right) and
+                position[1] in range(self.image_rect.top, 
+                                     self.image_rect.bottom))
 

@@ -13,6 +13,7 @@ from expression_data_base import (
 
 )
 from expression_game_input import get_user_input
+from expression_game_button import Button
 
 
 def get_expressions_lines():
@@ -79,6 +80,7 @@ def display_flickering_dots():
     if third_dot is True:
         screen.blit(dots[0], (62, 740))
 
+
 def display_input():
     global first_dot, second_dot, third_dot, fourth_dot
 
@@ -98,6 +100,59 @@ def display_input():
     screen.blit(display_input, (30, 740))
 
 
+def menu_scene():
+    global running
+    while running:
+        # Fill the background with black
+        screen.fill((0, 0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                play_clicked = play_button.is_clicked(pygame.mouse.get_pos())
+                if play_clicked:
+                    return False
+                # running = is_clicked() was laggy
+                exit_clicked = exit_button.is_clicked(pygame.mouse.get_pos())
+                if exit_clicked:
+                    running = False
+
+        play_button.update(screen)
+        exit_button.update(screen)
+        pygame.display.flip()
+    return False
+
+
+def game_scene():
+    global running, input
+    while running:
+    # Fill the background with black
+        screen.fill((0, 0, 0))
+        
+        screen.blit(input_image, (25,740))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            input = get_user_input(event, input)
+            if len(input) > 0 and input[-1] == "\n":
+                input = ""
+                return False
+
+        display_expressions()
+        if input == "":
+            if pygame.time.get_ticks() % 240 == 0:
+                display_flickering_dots()                
+            else: 
+                continue
+        else:        
+            display_input()
+        # Flip the display
+        pygame.display.flip()
+    return False
+    
+
 ## def start():
 database_session = init()
 pygame.init()
@@ -115,33 +170,22 @@ third_dot = False
 fourth_dot = False
 input = ""
 input_image = pygame.image.load("./Sprites/input_sprite.png")
+menu_active = True
+game_active = False
+button_image = pygame.image.load("./Sprites/button_sprite.png")
+play_button = Button(button_image, 50, 40, "play", font)
+exit_button = Button(button_image, 50, 72, "exit", font)
+
 
 ## def update():
 while running:
-
-    # Fill the background with white
-    screen.fill((0, 0, 0))
-
-    # Did the user click the window close button?
-    screen.blit(input_image, (25,740))
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        input = get_user_input(event, input)
-
-    display_expressions()
-    if input == "":
-        if pygame.time.get_ticks() % 240 == 0:
-            display_flickering_dots()
-        else: 
-            continue
-    else:        
-        display_input()
-
-
-    # Flip the display
-    pygame.display.flip()
+    if menu_active:
+        menu_active = menu_scene()
+        game_active = menu_active == False
+    if game_active:
+        game_active = game_scene()
+        menu_active = game_active == False
+    
 
 # def on_exit():
 pygame.quit()
