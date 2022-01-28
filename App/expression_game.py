@@ -180,7 +180,7 @@ game_active = False
 button_image = pygame.image.load("./Sprites/button_sprite.png")
 play_button = Button(button_image, 50, 40, "play", font)
 exit_button = Button(button_image, 50, 72, "exit", font)
-menu_button = Button(button_image, 75, 786, "menu", font)
+menu_button = Button(button_image, 75, 787, "menu", font)
 
 ## def update():
 while running:
