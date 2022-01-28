@@ -152,7 +152,8 @@ def menu_scene():
 
 
 def game_scene():
-    global running, input, expressions_lines, expression_solution_thread    
+    global running, input, expressions_lines, expression_solution_thread
+    global expressions_solution
     expressions_lines = get_expressions_lines()
     expression_solution_thread = Thread(target=get_expressions_solution)
     expression_solution_thread.start()
@@ -171,7 +172,10 @@ def game_scene():
                     return False
             input = get_user_input(event, input)
             if len(input) > 0 and input[-1] == "\n":
-                expression_solution_thread.join()                
+                expression_solution_thread.join()
+                if input == expressions_solution:                    
+                    print("poprawne")
+                expressions_solution = ""
                 input = ""
                 return False
 
