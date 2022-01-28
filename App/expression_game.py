@@ -130,23 +130,28 @@ def game_scene():
     # Fill the background with black
         screen.fill((0, 0, 0))
         
-        screen.blit(input_image, (25,740))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                menu_clicked = menu_button.is_clicked(pygame.mouse.get_pos())
+                if menu_clicked:
+                    return False
             input = get_user_input(event, input)
             if len(input) > 0 and input[-1] == "\n":
                 input = ""
                 return False
 
+        screen.blit(input_image, (25,740))
         display_expressions()
+        menu_button.update(screen)
         if input == "":
             if pygame.time.get_ticks() % 240 == 0:
-                display_flickering_dots()                
-            else: 
+                display_flickering_dots()
+            else:
                 continue
-        else:        
+        else:
             display_input()
         # Flip the display
         pygame.display.flip()
@@ -175,7 +180,7 @@ game_active = False
 button_image = pygame.image.load("./Sprites/button_sprite.png")
 play_button = Button(button_image, 50, 40, "play", font)
 exit_button = Button(button_image, 50, 72, "exit", font)
-
+menu_button = Button(button_image, 75, 786, "menu", font)
 
 ## def update():
 while running:
