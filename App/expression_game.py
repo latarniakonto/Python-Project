@@ -1,5 +1,7 @@
 # Import and initialize the pygame library
 import pygame
+import time
+from threading import Thread
 from expression import (
     Constant, Variable,
     Add, Subtract, Times, Divide,
@@ -16,11 +18,13 @@ from expression_game_input import get_user_input
 from expression_game_button import Button
 
 
-def get_expressions_lines():
+def get_expressions_lines():    
+    global expressions_lines
+    time.sleep(5)
     expressions_lines = [[]]
     for e in expressions: 
         e_text = str(e)     
-        lines = []   
+        lines = []
         line = ""
         # pygame font doesn't support newlines :(, so here is solution for that
         for char in e_text:            
@@ -32,8 +36,7 @@ def get_expressions_lines():
         if line != "":
             lines.append(font.render(line, True, (0, 255, 0)))
         expressions_lines.append(lines)
-    
-    return expressions_lines
+        
 
 
 def display_expressions():
@@ -166,7 +169,10 @@ running = True
 font_size = 12
 font = pygame.font.Font("./Font/expression_font.ttf", font_size)
 expressions = get_expressions_from_data_base(database_session)
-expressions_lines = get_expressions_lines()
+expressions_lines = [[]]
+expressions_lines_thread = Thread(target=get_expressions_lines)
+expressions_lines_thread.start()
+# expressions_solutions = get_expressions_solutions()
 dots = [font.render(".", True, (0, 255, 0)),        
         font.render(" ", True, (0, 255, 0))]
 first_dot = False
@@ -182,14 +188,16 @@ play_button = Button(button_image, 50, 40, "play", font)
 exit_button = Button(button_image, 50, 72, "exit", font)
 menu_button = Button(button_image, 75, 787, "menu", font)
 
+
 ## def update():
 while running:
     if menu_active:
         menu_active = menu_scene()
         game_active = menu_active == False
+        expressions_lines_thread.join()
     if game_active:
         game_active = game_scene()
-        menu_active = game_active == False
+        menu_active = game_active == False        
     
 
 # def on_exit():
