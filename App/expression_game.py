@@ -2,6 +2,7 @@
 import queue
 import pygame
 import time
+import random
 from threading import Thread
 from expression import (
     Constant, Variable,
@@ -41,8 +42,24 @@ def get_expressions_lines():
         
 
 def get_expressions_solution():
-    global expressions_solution
-    time.sleep(10)
+    global expressions_solution, solve_for_number
+
+    print(solve_for_number)
+    for e in expressions:
+        if e.class_name == "Instruction":
+            x_dict = {}
+            e.run(x_dict)
+            expressions_solution += str(int(x_dict["x"]))
+            expressions_solution += "!"
+        else:   
+            x_value = e.evaluate({"x" : solve_for_number})
+            expressions_solution += str(int(x_value))
+            expressions_solution += "!"
+    print(expressions_solution)
+    expressions_solution = expressions_solution[:-1]
+    expressions_solution += "\n"        
+    solve_for_number = random.randint(1, 10)    
+
 
 
 
@@ -135,7 +152,7 @@ def menu_scene():
 
 
 def game_scene():
-    global running, input, expressions_lines, expression_solution_thread
+    global running, input, expressions_lines, expression_solution_thread    
     expressions_lines = get_expressions_lines()
     expression_solution_thread = Thread(target=get_expressions_solution)
     expression_solution_thread.start()
@@ -150,11 +167,11 @@ def game_scene():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 menu_clicked = menu_button.is_clicked(pygame.mouse.get_pos())                
                 if menu_clicked:
-                    expression_solution_thread.join()
+                    expression_solution_thread.join()                    
                     return False
             input = get_user_input(event, input)
             if len(input) > 0 and input[-1] == "\n":
-                expression_solution_thread.join()
+                expression_solution_thread.join()                
                 input = ""
                 return False
 
@@ -201,19 +218,20 @@ button_image = pygame.image.load("./Sprites/button_sprite.png")
 play_button = Button(button_image, 50, 40, "play", font)
 exit_button = Button(button_image, 50, 72, "exit", font)
 menu_button = Button(button_image, 75, 787, "menu", font)
+solve_for_number = random.randint(1, 10)
 
 
 ## def update():
 while running:
     if menu_active:
         menu_active = menu_scene()
-        game_active = menu_active == False
+        game_active = menu_active == False and running == True
         if len(expressions) == 0:
             expressions_thread.join()
             expressions = q.get()        
     if game_active:
         game_active = game_scene()
-        menu_active = game_active == False        
+        menu_active = game_active == False and running == True
     
 
 # def on_exit():
