@@ -18,6 +18,7 @@ from expression_data_base import (
 )
 from expression_game_input import get_user_input
 from expression_game_button import Button
+from expression_game_message import display_messages
 
 
 def get_expressions_lines():        
@@ -31,15 +32,16 @@ def get_expressions_lines():
         for char in e_text:
             if char == '\n':                
                 lines.append(font.render(line, True, (0, 255, 0)))
-                line = ""
+                line = ""                
             else:
                 line += char
-        if line != "":
+        if line != "":            
             lines.append(font.render(line, True, (0, 255, 0)))
+        lines.append(font.render(" ", True, (0, 255, 0)))
+        lines.append(font.render(" ", True, (0, 255, 0)))
         expressions_lines.append(lines)
     return expressions_lines
 
-        
 
 def get_expressions_solution():
     global expressions_solution, solve_for_number
@@ -61,8 +63,6 @@ def get_expressions_solution():
     solve_for_number = random.randint(1, 10)    
 
 
-
-
 def display_expressions():
     pos_x = 30
     pos_y = 40
@@ -71,7 +71,7 @@ def display_expressions():
     for lines in expressions_lines:                 
         # pygame font doesn't support newlines :(, so here is solution for that                
         for line in range(len(lines)):
-            screen.blit(lines[line],(pos_x, pos_y + ((e_iter + line) * 2 * font_size)))
+            screen.blit(lines[line],(pos_x, pos_y + ((e_iter + line) * 2 * font_size)))        
         e_iter += len(lines)
 
 
@@ -180,7 +180,8 @@ def game_scene():
                 return False
 
         screen.blit(input_image, (25,740))
-        display_expressions()
+        display_expressions()        
+        display_messages(screen, font)
         menu_button.update(screen)
         if input == "":
             if pygame.time.get_ticks() % 240 == 0:
