@@ -1,4 +1,5 @@
 # Import and initialize the pygame library
+import queue
 import pygame
 import time
 from threading import Thread
@@ -18,16 +19,15 @@ from expression_game_input import get_user_input
 from expression_game_button import Button
 
 
-def get_expressions_lines():    
-    global expressions_lines
-    time.sleep(5)
+def get_expressions_lines():        
     expressions_lines = [[]]
+    
     for e in expressions: 
-        e_text = str(e)     
+        e_text = str(e)  
         lines = []
         line = ""
         # pygame font doesn't support newlines :(, so here is solution for that
-        for char in e_text:            
+        for char in e_text:
             if char == '\n':                
                 lines.append(font.render(line, True, (0, 255, 0)))
                 line = ""
@@ -36,14 +36,21 @@ def get_expressions_lines():
         if line != "":
             lines.append(font.render(line, True, (0, 255, 0)))
         expressions_lines.append(lines)
+    return expressions_lines
+
         
+
+def get_expressions_solution():
+    global expressions_solution
+    time.sleep(10)
+
 
 
 def display_expressions():
     pos_x = 30
     pos_y = 40
 
-    e_iter = 0        
+    e_iter = 0    
     for lines in expressions_lines:                 
         # pygame font doesn't support newlines :(, so here is solution for that                
         for line in range(len(lines)):
@@ -128,7 +135,10 @@ def menu_scene():
 
 
 def game_scene():
-    global running, input
+    global running, input, expressions_lines, expression_solution_thread
+    expressions_lines = get_expressions_lines()
+    expression_solution_thread = Thread(target=get_expressions_solution)
+    expression_solution_thread.start()
     while running:
     # Fill the background with black
         screen.fill((0, 0, 0))
@@ -138,11 +148,13 @@ def game_scene():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                menu_clicked = menu_button.is_clicked(pygame.mouse.get_pos())
+                menu_clicked = menu_button.is_clicked(pygame.mouse.get_pos())                
                 if menu_clicked:
+                    expression_solution_thread.join()
                     return False
             input = get_user_input(event, input)
             if len(input) > 0 and input[-1] == "\n":
+                expression_solution_thread.join()
                 input = ""
                 return False
 
@@ -162,17 +174,19 @@ def game_scene():
     
 
 ## def start():
+q = queue.Queue()
 database_session = init()
 pygame.init()
 screen = pygame.display.set_mode([1000, 1000])
 running = True
 font_size = 12
 font = pygame.font.Font("./Font/expression_font.ttf", font_size)
-expressions = get_expressions_from_data_base(database_session)
+expressions = []
+expressions_thread = Thread(target=get_expressions_from_data_base, args=(database_session, q))
+expressions_thread.start()
 expressions_lines = [[]]
-expressions_lines_thread = Thread(target=get_expressions_lines)
-expressions_lines_thread.start()
-# expressions_solutions = get_expressions_solutions()
+expressions_solution = ""
+expressions_solution_thread = None
 dots = [font.render(".", True, (0, 255, 0)),        
         font.render(" ", True, (0, 255, 0))]
 first_dot = False
@@ -194,12 +208,15 @@ while running:
     if menu_active:
         menu_active = menu_scene()
         game_active = menu_active == False
-        expressions_lines_thread.join()
+        if len(expressions) == 0:
+            expressions_thread.join()
+            expressions = q.get()        
     if game_active:
         game_active = game_scene()
         menu_active = game_active == False        
     
 
 # def on_exit():
+# expression_solution_thread.join()
 pygame.quit()
 database_session.close()
