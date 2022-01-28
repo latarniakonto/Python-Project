@@ -56,7 +56,7 @@ class ProgrammingExpression(Base):
 
 
 def init():
-    engine = create_engine("sqlite:////tmp/temp.db")
+    engine = create_engine("sqlite:////tmp/temp.db", connect_args={'check_same_thread': False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     current_session = Session()
@@ -110,7 +110,7 @@ def delete_arithmetic_expression(id, expression_encoding, session):
                                                    expression_encoding=expression_encoding).delete()
     return session
 
-def get_expressions_from_data_base(session):    
+def get_expressions_from_data_base(session, q):    
     expressions = []
 
     for row in session.query(ArithmeticExpression):
@@ -119,5 +119,5 @@ def get_expressions_from_data_base(session):
     for row in session.query(ProgrammingExpression):        
         e = decode_expression(row.expression_encoding)        
         expressions.append(e)
-
-    return expressions
+    q.put(expressions)
+    
