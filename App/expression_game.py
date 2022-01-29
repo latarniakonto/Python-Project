@@ -181,7 +181,7 @@ def game_scene():
 
         screen.blit(input_image, (25,740))
         display_expressions()        
-        display_messages(screen, font)
+        display_messages(screen, font, expressions, solve_for_number)
         menu_button.update(screen)
         if input == "":
             if pygame.time.get_ticks() % 240 == 0:
