@@ -24,6 +24,26 @@ from expression_game_message import (
 )
 
 
+def get_expressions_solution():
+    global expressions_solution, solve_for_number
+
+    expressions_solution = ""
+    solve_for_number = random.randint(1, 10)
+    print(solve_for_number)
+    for e in expressions:
+        if e.class_name == "Instruction":
+            x_dict = {}
+            e.run(x_dict)
+            expressions_solution += str(int(x_dict["x"]))
+            expressions_solution += "!"
+        else:   
+            x_value = e.evaluate({"x" : solve_for_number})
+            expressions_solution += str(int(x_value))
+            expressions_solution += "!"
+    print(expressions_solution)
+    expressions_solution = expressions_solution[:-1]
+    expressions_solution += "\n"                
+
 def get_expressions_lines():        
     expressions_lines = [[]]
     
@@ -44,27 +64,6 @@ def get_expressions_lines():
         lines.append(font.render(" ", True, (0, 255, 0)))
         expressions_lines.append(lines)
     return expressions_lines
-
-
-def get_expressions_solution():
-    global expressions_solution, solve_for_number
-
-    expressions_solution = ""
-    solve_for_number = random.randint(1, 10)
-    print(solve_for_number)
-    for e in expressions:
-        if e.class_name == "Instruction":
-            x_dict = {}
-            e.run(x_dict)
-            expressions_solution += str(int(x_dict["x"]))
-            expressions_solution += "!"
-        else:   
-            x_value = e.evaluate({"x" : solve_for_number})
-            expressions_solution += str(int(x_value))
-            expressions_solution += "!"
-    print(expressions_solution)
-    expressions_solution = expressions_solution[:-1]
-    expressions_solution += "\n"                
 
 
 def display_expressions():
@@ -131,6 +130,20 @@ def display_input():
     screen.blit(display_input, (30, 740))
 
 
+def display_flickering_game_status(flicker_counter):    
+    if flicker_counter < 6:
+        if tryed_solving:    
+            if succeeded_solving:
+                if flicker_counter % 2 == 0:
+                    display_succeed_message(screen, font)
+                flicker_counter += 1                    
+            else:                    
+                if flicker_counter % 2 == 0:
+                    display_failure_message(screen, font)
+                flicker_counter += 1
+    return flicker_counter
+
+
 def menu_scene():
     global running, tryed_solving, succeeded_solving
     flicker_counter = 0
@@ -161,18 +174,6 @@ def menu_scene():
         pygame.display.flip()
     return False
 
-def display_flickering_game_status(flicker_counter):    
-    if flicker_counter < 7:
-        if tryed_solving:    
-            if succeeded_solving:
-                if flicker_counter % 2 == 0:
-                    display_succeed_message(screen, font)
-                flicker_counter += 1                    
-            else:                    
-                if flicker_counter % 2 == 0:
-                    display_failure_message(screen, font)
-                flicker_counter += 1
-    return flicker_counter
 
 
 def game_scene():
@@ -247,8 +248,8 @@ input_image = pygame.image.load("./Sprites/input_sprite.png")
 menu_active = True
 game_active = False
 button_image = pygame.image.load("./Sprites/button_sprite.png")
-play_button = Button(button_image, 50, 40, "play", font)
-exit_button = Button(button_image, 50, 72, "exit", font)
+play_button = Button(button_image, 490, 440, "play", font)
+exit_button = Button(button_image, 490, 472, "exit", font)
 menu_button = Button(button_image, 75, 787, "menu", font)
 solve_for_number = random.randint(1, 10)
 succeeded_solving = False
@@ -258,10 +259,10 @@ tryed_solving = False
 while running:
     if menu_active:
         menu_active = menu_scene()
-        game_active = menu_active == False and running == True        
+        game_active = menu_active == False and running == True
         if len(expressions) == 0:
             expressions_thread.join()
-            expressions = q.get()        
+            expressions = q.get()
     if game_active:        
         game_active = game_scene()
         menu_active = game_active == False and running == True        

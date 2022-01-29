@@ -38,7 +38,7 @@ def display_succeed_message(screen, font):
 
 def display_failure_message(screen, font):
     message = font.render("failed", True, (0, 255, 0))
-    screen.blit(message, (400, 25))
+    screen.blit(message, (430, 25))
 
 
 
