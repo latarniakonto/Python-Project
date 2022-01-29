@@ -1,11 +1,11 @@
-import time
+
 
 def display_messages(screen, font, expressions, solve_for_number):
     text = "solve this expression for x = " + str(solve_for_number)
     message_1 = font.render(text, True, (0, 255, 0))
     screen.blit(message_1, (30, 15))
 
-    text = "solve this expression" 
+    text = "solve this expression"
     message_2 = font.render(text, True, (0, 255, 0))
     screen.blit(message_2, (30, 85))
 
@@ -31,18 +31,12 @@ def display_messages(screen, font, expressions, solve_for_number):
     message_4 = font.render(text, True, (0, 255, 0))
     screen.blit(message_4, (430, 830))
 
-def display_succeed_message(screen, font):        
+
+def display_succeed_message(screen, font):
     message = font.render("succeeded", True, (0, 255, 0))
     screen.blit(message, (400, 25))
-        
+
 
 def display_failure_message(screen, font):
     message = font.render("failed", True, (0, 255, 0))
     screen.blit(message, (430, 25))
-
-
-
-
-
-    
-    

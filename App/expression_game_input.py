@@ -1,21 +1,28 @@
 import pygame
 
+
 def get_user_input(event, input):
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_BACKSPACE:
             if input != "":
                 input = input[:len(input) - 1]
-        elif event.key == pygame.K_1 and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+        elif (event.key == pygame.K_1 and pygame.key.get_mods() &
+              pygame.KMOD_SHIFT):
             input += "!"
-        elif event.key == pygame.K_KP_DIVIDE and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+        elif (event.key == pygame.K_KP_DIVIDE and pygame.key.get_mods() &
+              pygame.KMOD_SHIFT):
             input += "?"
-        elif event.key == pygame.K_9 and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+        elif (event.key == pygame.K_9 and pygame.key.get_mods() &
+              pygame.KMOD_SHIFT):
             input += "("
-        elif event.key == pygame.K_0 and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+        elif (event.key == pygame.K_0 and pygame.key.get_mods() &
+              pygame.KMOD_SHIFT):
             input += ")"
-        elif event.key == pygame.K_EQUALS and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+        elif (event.key == pygame.K_EQUALS and pygame.key.get_mods() &
+              pygame.KMOD_SHIFT):
             input += "+"
-        elif event.key == pygame.K_8 and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+        elif (event.key == pygame.K_8 and pygame.key.get_mods() &
+              pygame.KMOD_SHIFT):
             input += "*"
         elif event.key == pygame.K_0:
             input += "0"

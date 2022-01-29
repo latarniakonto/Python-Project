@@ -36,29 +36,30 @@ def get_expressions_solution():
             e.run(x_dict)
             expressions_solution += str(int(x_dict["x"]))
             expressions_solution += "!"
-        else:   
-            x_value = e.evaluate({"x" : solve_for_number})
+        else:
+            x_value = e.evaluate({"x": solve_for_number})
             expressions_solution += str(int(x_value))
             expressions_solution += "!"
     print(expressions_solution)
     expressions_solution = expressions_solution[:-1]
-    expressions_solution += "\n"                
+    expressions_solution += "\n"
 
-def get_expressions_lines():        
+
+def get_expressions_lines():
     expressions_lines = [[]]
-    
-    for e in expressions: 
-        e_text = str(e)  
+
+    for e in expressions:
+        e_text = str(e)
         lines = []
         line = ""
         # pygame font doesn't support newlines :(, so here is solution for that
         for char in e_text:
-            if char == '\n':                
+            if char == '\n':
                 lines.append(font.render(line, True, (0, 255, 0)))
-                line = ""                
+                line = ""
             else:
                 line += char
-        if line != "":            
+        if line != "":
             lines.append(font.render(line, True, (0, 255, 0)))
         lines.append(font.render(" ", True, (0, 255, 0)))
         lines.append(font.render(" ", True, (0, 255, 0)))
@@ -70,17 +71,18 @@ def display_expressions():
     pos_x = 30
     pos_y = 40
 
-    e_iter = 0    
-    for lines in expressions_lines:                 
-        # pygame font doesn't support newlines :(, so here is solution for that                
+    e_iter = 0
+    for lines in expressions_lines:
+        # pygame font doesn't support newlines :(, so here is solution for that
         for line in range(len(lines)):
-            screen.blit(lines[line],(pos_x, pos_y + ((e_iter + line) * 2 * font_size)))        
+            screen.blit(lines[line],
+                        (pos_x, pos_y + ((e_iter + line) * 2 * font_size)))
         e_iter += len(lines)
 
 
-def display_flickering_dots():    
+def display_flickering_dots():
     global first_dot, second_dot, third_dot, fourth_dot
-        
+
     if first_dot is False:
         first_dot = True
         screen.blit(dots[0], (30, 740))
@@ -130,14 +132,14 @@ def display_input():
     screen.blit(display_input, (30, 740))
 
 
-def display_flickering_game_status(flicker_counter):    
+def display_flickering_game_status(flicker_counter):
     if flicker_counter < 6:
-        if tryed_solving:    
+        if tryed_solving:
             if succeeded_solving:
                 if flicker_counter % 2 == 0:
                     display_succeed_message(screen, font)
-                flicker_counter += 1                    
-            else:                    
+                flicker_counter += 1
+            else:
                 if flicker_counter % 2 == 0:
                     display_failure_message(screen, font)
                 flicker_counter += 1
@@ -168,12 +170,11 @@ def menu_scene():
 
         if pygame.time.get_ticks() % 360 == 0:
             flicker_counter = display_flickering_game_status(flicker_counter)
-        else: 
+        else:
             continue
-                
+
         pygame.display.flip()
     return False
-
 
 
 def game_scene():
@@ -184,17 +185,16 @@ def game_scene():
     expression_solution_thread.start()
     tryed_solving = True
     while running:
-    # Fill the background with black
+        # Fill the background with black
         screen.fill((0, 0, 0))
-        
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                menu_clicked = menu_button.is_clicked(pygame.mouse.get_pos())                
+                menu_clicked = menu_button.is_clicked(pygame.mouse.get_pos())
                 if menu_clicked:
-                    expression_solution_thread.join()                    
+                    expression_solution_thread.join()
                     return False
             input = get_user_input(event, input)
             if len(input) > 0 and input[-1] == "\n":
@@ -203,12 +203,12 @@ def game_scene():
                     succeeded_solving = True
                     print("poprawne")
                 else:
-                    succeeded_solving = False                
+                    succeeded_solving = False
                 input = ""
                 return False
 
-        screen.blit(input_image, (25,740))
-        display_expressions()        
+        screen.blit(input_image, (25, 740))
+        display_expressions()
         display_messages(screen, font, expressions, solve_for_number)
         menu_button.update(screen)
         if input == "":
@@ -221,9 +221,9 @@ def game_scene():
         # Flip the display
         pygame.display.flip()
     return False
-    
 
-## def start():
+
+# def start():
 q = queue.Queue()
 database_session = init()
 pygame.init()
@@ -232,12 +232,13 @@ running = True
 font_size = 12
 font = pygame.font.Font("./Font/expression_font.ttf", font_size)
 expressions = []
-expressions_thread = Thread(target=get_expressions_from_data_base, args=(database_session, q))
+expressions_thread = Thread(target=get_expressions_from_data_base,
+                            args=(database_session, q))
 expressions_thread.start()
 expressions_lines = [[]]
 expressions_solution = ""
 expressions_solution_thread = None
-dots = [font.render(".", True, (0, 255, 0)),        
+dots = [font.render(".", True, (0, 255, 0)),
         font.render(" ", True, (0, 255, 0))]
 first_dot = False
 second_dot = False
@@ -255,19 +256,18 @@ solve_for_number = random.randint(1, 10)
 succeeded_solving = False
 tryed_solving = False
 
-## def update():
+# def update():
 while running:
     if menu_active:
         menu_active = menu_scene()
-        game_active = menu_active == False and running == True
+        game_active = menu_active is False and running is True
         if len(expressions) == 0:
             expressions_thread.join()
             expressions = q.get()
-    if game_active:        
+    if game_active:
         game_active = game_scene()
-        menu_active = game_active == False and running == True        
-            
-    
+        menu_active = game_active is False and running is True
+
 
 # def on_exit():
 pygame.quit()
