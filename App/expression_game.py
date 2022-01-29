@@ -133,6 +133,7 @@ def display_input():
 
 def menu_scene():
     global running, tryed_solving, succeeded_solving
+    flicker_counter = 0
     while running:
         # Fill the background with black
         screen.fill((0, 0, 0))
@@ -151,16 +152,27 @@ def menu_scene():
 
         play_button.update(screen)
         exit_button.update(screen)
-        if tryed_solving:            
-            if succeeded_solving:
-                display_succeed_message(screen, font)
-            else:
-                display_failure_message(screen, font)
-            
 
-        
+        if pygame.time.get_ticks() % 360 == 0:
+            flicker_counter = display_flickering_game_status(flicker_counter)
+        else: 
+            continue
+                
         pygame.display.flip()
     return False
+
+def display_flickering_game_status(flicker_counter):    
+    if flicker_counter < 7:
+        if tryed_solving:    
+            if succeeded_solving:
+                if flicker_counter % 2 == 0:
+                    display_succeed_message(screen, font)
+                flicker_counter += 1                    
+            else:                    
+                if flicker_counter % 2 == 0:
+                    display_failure_message(screen, font)
+                flicker_counter += 1
+    return flicker_counter
 
 
 def game_scene():
@@ -257,6 +269,5 @@ while running:
     
 
 # def on_exit():
-# expression_solution_thread.join()
 pygame.quit()
 database_session.close()
