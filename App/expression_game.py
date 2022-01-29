@@ -18,7 +18,10 @@ from expression_data_base import (
 )
 from expression_game_input import get_user_input
 from expression_game_button import Button
-from expression_game_message import display_messages
+from expression_game_message import (
+    display_messages, display_succeed_message,
+    display_failure_message
+)
 
 
 def get_expressions_lines():        
@@ -46,6 +49,8 @@ def get_expressions_lines():
 def get_expressions_solution():
     global expressions_solution, solve_for_number
 
+    expressions_solution = ""
+    solve_for_number = random.randint(1, 10)
     print(solve_for_number)
     for e in expressions:
         if e.class_name == "Instruction":
@@ -59,8 +64,7 @@ def get_expressions_solution():
             expressions_solution += "!"
     print(expressions_solution)
     expressions_solution = expressions_solution[:-1]
-    expressions_solution += "\n"        
-    solve_for_number = random.randint(1, 10)    
+    expressions_solution += "\n"                
 
 
 def display_expressions():
@@ -128,7 +132,7 @@ def display_input():
 
 
 def menu_scene():
-    global running
+    global running, tryed_solving, succeeded_solving
     while running:
         # Fill the background with black
         screen.fill((0, 0, 0))
@@ -147,16 +151,25 @@ def menu_scene():
 
         play_button.update(screen)
         exit_button.update(screen)
+        if tryed_solving:            
+            if succeeded_solving:
+                display_succeed_message(screen, font)
+            else:
+                display_failure_message(screen, font)
+            
+
+        
         pygame.display.flip()
     return False
 
 
 def game_scene():
     global running, input, expressions_lines, expression_solution_thread
-    global expressions_solution
+    global succeeded_solving, tryed_solving
     expressions_lines = get_expressions_lines()
     expression_solution_thread = Thread(target=get_expressions_solution)
     expression_solution_thread.start()
+    tryed_solving = True
     while running:
     # Fill the background with black
         screen.fill((0, 0, 0))
@@ -173,9 +186,11 @@ def game_scene():
             input = get_user_input(event, input)
             if len(input) > 0 and input[-1] == "\n":
                 expression_solution_thread.join()
-                if input == expressions_solution:                    
+                if input == expressions_solution:
+                    succeeded_solving = True
                     print("poprawne")
-                expressions_solution = ""
+                else:
+                    succeeded_solving = False                
                 input = ""
                 return False
 
@@ -224,19 +239,21 @@ play_button = Button(button_image, 50, 40, "play", font)
 exit_button = Button(button_image, 50, 72, "exit", font)
 menu_button = Button(button_image, 75, 787, "menu", font)
 solve_for_number = random.randint(1, 10)
-
+succeeded_solving = False
+tryed_solving = False
 
 ## def update():
 while running:
     if menu_active:
         menu_active = menu_scene()
-        game_active = menu_active == False and running == True
+        game_active = menu_active == False and running == True        
         if len(expressions) == 0:
             expressions_thread.join()
             expressions = q.get()        
-    if game_active:
+    if game_active:        
         game_active = game_scene()
-        menu_active = game_active == False and running == True
+        menu_active = game_active == False and running == True        
+            
     
 
 # def on_exit():
