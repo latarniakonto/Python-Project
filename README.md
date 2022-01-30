@@ -1,0 +1,23 @@
+## Requirements
+To run this game you have to install the following pip3 packages:
+*sqlalchemy*, *pygame* 
+
+## How to run it?
+This game should be run from withing the main folder. It is because path to *Font* and *Sprites* folder is hard coded in *expression_game.py*
+
+Run these commands int this order to play the game: <br/>
+`python3 App/expression_creator.py` <br/>
+`python3 App/expression_game.py`
+
+If you want also to run tests:
+<body>
+    <details>
+        <summary>    
+        </summary>
+        I modified the path using context, hence the tests should be run from within Test folder (abspath "../App/" is set up) <br/>
+        python3 test_suite.py
+    </details>
+</body>
+
+## Flow diagram
+![](https://i.imgur.com/KMcEK7T.png)
