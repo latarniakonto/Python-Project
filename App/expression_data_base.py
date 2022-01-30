@@ -79,7 +79,7 @@ def list_programming_expression(session):
         print(row_tuple)
 
 
-def list_arithemitc_expression(session):
+def list_arithmetic_expression(session):
     for row in session.query(ArithmeticExpression):
         row_tuple = (row.id, row.expression_encoding)
         print(row_tuple)
