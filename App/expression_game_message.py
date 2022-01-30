@@ -27,9 +27,13 @@ def display_messages(screen, font, expressions, solve_for_number):
     message_4 = font.render(text, True, (0, 255, 0))
     screen.blit(message_4, (430, 800))
 
-    text = "press enter to submit"
+    text = "you can use backspace"
     message_4 = font.render(text, True, (0, 255, 0))
     screen.blit(message_4, (430, 830))
+
+    text = "press enter to submit"
+    message_5 = font.render(text, True, (0, 255, 0))
+    screen.blit(message_5, (430, 860))
 
 
 def display_succeed_message(screen, font):
