@@ -7,6 +7,21 @@ from expression_formatter import decode_expression
 
 Base = declarative_base()
 
+"""
+Expression storage system
+
+ARITHMETICEXPRESSION
+It's a table of arithmetic expressions specified in expression.py. Expressions
+are stored in a string format, they are formatted using expresssion_formatter
+script. You can see how it works in expression_creator script.
+
+
+PROGRAMMINGEXPRESSION -
+It's a table of programming expressions specified in expression.py. Expressions
+are stored in a string format, they are formatted using expresssion_formatter
+script. You can see how it works in expression_creator script.
+"""
+
 
 class ArithmeticExpression(Base):
     __tablename__ = "ARITHMETIC_EXPRESSION"
