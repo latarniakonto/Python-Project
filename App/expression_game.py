@@ -4,15 +4,8 @@ import pygame
 import time
 import random
 from threading import Thread
-from expression import (
-    Constant, Variable,
-    Add, Subtract, Times, Divide,
-    Instruction, Assign, While, If
-)
 from expression_data_base import (
     init,
-    ArithmeticExpression,
-    ProgrammingExpression,
     get_expressions_from_data_base
 
 )
