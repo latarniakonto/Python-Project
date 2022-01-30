@@ -1,6 +1,6 @@
 ## Requirements
 To run this game you have to install the following pip3 packages:
-*sqlalchemy*, *pygame* 
+*sqlalchemy* and *pygame*
 
 ## How to run it?
 This game should be run from withing the main folder. It is because path to *Font* and *Sprites* folder is hard coded in *expression_game.py*
