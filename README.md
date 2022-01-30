@@ -9,7 +9,7 @@ Run these commands int this order to play the game: <br/>
 `python3 App/expression_creator.py` <br/>
 `python3 App/expression_game.py`
 
-If you want also to run tests:
+If you want to also run tests:
 <body>
     <details>
         <summary>    
