@@ -1,22 +1,40 @@
-
-documentation="""
+"""
 For expressions
-Constant(value) - It creates constant for given value. value should be of type int
-Variable(name) - It creates variable for given name. name should be of type str, it can't consists numbers.
-Add(left, right) and Subtract(left, right) and Times(left, right) and Divide(left, right) - It binds two operands together using appropriate operator. Operators cannot be added/multiplied
-                                                                                            left and right should be instances of Expression class.
 
-For programming part (ex1a)
-I am using expressions in implementing Instruction(first, second=None), Assign(name, value), While(condition, instructions), If(condition, yes, no)
-Instruction(first, second) - first and second are instances of class Instruction e.g. While, If, Assign.
-                             With introduction of Instruction class I can easily creates next "lines of code" in my custom programming language.
-                             If second is None that means there are no more instructions to execute.                             
-Assign(name, value) - name should be instance of Variable class. value should be instance of Constant class
+Constant(value) - It creates constant for given value. value should be of type
+                int
+Variable(name) - It creates variable for given name. name should be of type
+                str, it can't consists of numbers.
+Add(left, right) and Subtract(left, right) and Times(left, right)
+and Divide(left, right) - It binds two operands together using appropriate
+                        operator. Operators cannot be added/multiplied.
+                        left and right should be instances of Expression
+                        class.
 
-While(condition, instructions) - condition should be instance of Expression class. instruction should be instance of Instruction class
+For programming part (ex1a).
 
-If(condition, yes, no) - condition should be instance of Expression class. yes should be instance of Instruction class. no should be instance of Instruction class
-                         yes is run when condition is true, no is run when condition is false.
+I am using expressions in implementing Instruction(first, second=None),
+Assign(name, value), While(condition, instructions), If(condition, yes, no)
+
+Instruction(first, second) - first and second are instances of class
+                            Instruction e.g. While, If, Assign. With
+                            introduction of Instruction class I can easily
+                            creates next "lines of code" in my custom
+                            programming language. If second is None that
+                            means there are no more instructions to execute.
+
+Assign(name, value) - name should be instance of Variable class. value should
+                    be instance of Constant class.
+
+While(condition, instructions) - condition should be instance of Expression
+                                class. instruction should be instance of
+                                Instruction class.
+
+If(condition, yes, no) - condition should be instance of Expression class.
+                        yes should be instance of Instruction class.
+                        no should be instance of Instruction class.
+                        yes is run when condition is true, no is run when
+                        condition is false.
 """
 
 
@@ -41,7 +59,7 @@ class WrongInstanceException(Exception):
 
 
 class Expression:
-    def __init__(self):        
+    def __init__(self):
         pass
 
     def evaluate(self, variables):
@@ -84,7 +102,8 @@ class Variable(Expression):
             raise WrongTypeException("Variable should be of type str")
         for letter in name:
             if letter.isnumeric():
-                raise WrongVariableFormatException("Variable should consists of single letters")
+                raise WrongVariableFormatException("""Variable should consists
+                                                   of single letters""")
 
         self.name = name
         self.class_name = "Variable"
@@ -111,8 +130,10 @@ class Variable(Expression):
 
 class Add(Expression):
     def __init__(self, left, right):
-        if not isinstance(left, Expression) or not isinstance(right, Expression):
-            raise WrongInstanceException("Operands should be isntances of Expression")
+        if (not isinstance(left, Expression)
+                or not isinstance(right, Expression)):
+            raise WrongInstanceException("""Operands should be isntances
+                                         of Expression""")
         self.left = left
         self.right = right
         self.class_name = "Add"
@@ -123,15 +144,18 @@ class Add(Expression):
 
     def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return str(self.left) + " + " + str(self.right)
             else:
                 return str(self.left) + " + " + "(" + str(self.right) + ")"
         else:
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return "(" + str(self.left) + ")" + " + " + str(self.right)
             else:
-                return "(" + str(self.left) + ")" + " + " + "(" + str(self.right) + ")"
+                return "(" + str(self.left) + ")" + " + " + "(" + \
+                       str(self.right) + ")"
 
     def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
@@ -142,8 +166,10 @@ class Add(Expression):
 
 class Subtract(Expression):
     def __init__(self, left, right):
-        if not isinstance(left, Expression) or not isinstance(right, Expression):
-            raise WrongInstanceException("Operands should be isntances of Expression")
+        if (not isinstance(left, Expression)
+                or not isinstance(right, Expression)):
+            raise WrongInstanceException("""Operands should be isntances of
+                                         Expression""")
         self.left = left
         self.right = right
         self.class_name = "Subtract"
@@ -154,15 +180,18 @@ class Subtract(Expression):
 
     def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return str(self.left) + " - " + str(self.right)
             else:
                 return str(self.left) + " - " + "(" + str(self.right) + ")"
         else:
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return "(" + str(self.left) + ")" + " - " + str(self.right)
             else:
-                return "(" + str(self.left) + ")" + " - " + "(" + str(self.right) + ")"
+                return "(" + str(self.left) + ")" + " - " + "(" + \
+                       str(self.right) + ")"
 
     def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
@@ -173,8 +202,10 @@ class Subtract(Expression):
 
 class Times(Expression):
     def __init__(self, left, right):
-        if not isinstance(left, Expression) or not isinstance(right, Expression):
-            raise WrongInstanceException("Operands should be isntances of Expression")
+        if (not isinstance(left, Expression)
+                or not isinstance(right, Expression)):
+            raise WrongInstanceException("""Operands should be isntances of
+                                         Expression""")
         self.left = left
         self.right = right
         self.class_name = "Times"
@@ -185,15 +216,18 @@ class Times(Expression):
 
     def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return str(self.left) + " * " + str(self.right)
             else:
                 return str(self.left) + " * " + "(" + str(self.right) + ")"
         else:
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return "(" + str(self.left) + ")" + " * " + str(self.right)
             else:
-                return "(" + str(self.left) + ")" + " * " + "(" + str(self.right) + ")"
+                return "(" + str(self.left) + ")" + " * " + "(" + \
+                       str(self.right) + ")"
 
     def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
@@ -204,8 +238,10 @@ class Times(Expression):
 
 class Divide(Expression):
     def __init__(self, left, right):
-        if not isinstance(left, Expression) or not isinstance(right, Expression):
-            raise WrongInstanceException("Operands should be isntances of Expression")
+        if (not isinstance(left, Expression)
+                or not isinstance(right, Expression)):
+            raise WrongInstanceException("""Operands should be isntances of
+                                         Expression""")
         self.left = left
         self.right = right
         self.class_name = "Divide"
@@ -218,15 +254,18 @@ class Divide(Expression):
 
     def __str__(self):
         if isinstance(self.left, Variable) or isinstance(self.left, Constant):
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return str(self.left) + " / " + str(self.right)
             else:
                 return str(self.left) + " / " + "(" + str(self.right) + ")"
         else:
-            if isinstance(self.right, Variable) or isinstance(self.right, Constant):
+            if (isinstance(self.right, Variable)
+                    or isinstance(self.right, Constant)):
                 return "(" + str(self.left) + ")" + " / " + str(self.right)
             else:
-                return "(" + str(self.left) + ")" + " / " + "(" + str(self.right) + ")"
+                return "(" + str(self.left) + ")" + " / " + "(" + \
+                       str(self.right) + ")"
 
     def __add__(w1, w2):
         raise OperandNotSupportedException("You can't add operands")
@@ -237,12 +276,14 @@ class Divide(Expression):
 
 class Instruction():
     def __init__(self, first, second=None):
-        if not isinstance(first, Instruction) or (second is not None and not isinstance(second, Instruction)):
+        if (not isinstance(first, Instruction)
+                or (second is not None
+                    and not isinstance(second, Instruction))):
             raise WrongInstanceException()
         self.first = first
         self.second = second
         self.class_name = "Instruction"
-        self.decoding_helper = -1        
+        self.decoding_helper = -1
 
     def run(self, variables):
         self.first.run(variables)
@@ -251,11 +292,11 @@ class Instruction():
             return
         self.second.run(variables)
 
-    def __str__(self, counter=0):        
+    def __str__(self, counter=0):
         if self.second is None:
             return self.first.__str__(counter)
-        return self.first.__str__(counter)  + "\n" \
-               + self.second.__str__(counter)
+        return self.first.__str__(counter) + "\n" + \
+            self.second.__str__(counter)
 
 
 class Assign(Instruction):
@@ -278,7 +319,8 @@ class Assign(Instruction):
 
 class While(Instruction):
     def __init__(self, condition, instructions):
-        if not isinstance(condition, Expression) or not isinstance(instructions, Instruction):
+        if (not isinstance(condition, Expression)
+                or not isinstance(instructions, Instruction)):
             raise WrongInstanceException()
         self.condition = condition
         self.instructions = instructions
@@ -292,13 +334,15 @@ class While(Instruction):
 
     def __str__(self, counter):
         self.indent = self.indent * counter
-        return self.indent + "while " + str(self.condition) + " != 0:" + "\n" \
-               + self.instructions.__str__(counter + 1)
+        return self.indent + "while " + str(self.condition) + " != 0:" + \
+            "\n" + self.instructions.__str__(counter + 1)
 
 
 class If(Instruction):
     def __init__(self, condition, yes, no):
-        if not isinstance(condition, Expression) or not isinstance(yes, Instruction) or not isinstance(no, Instruction):
+        if (not isinstance(condition, Expression)
+                or not isinstance(yes, Instruction)
+                or not isinstance(no, Instruction)):
             raise WrongInstanceException()
         self.condition = condition
         self.yes = yes
@@ -315,7 +359,7 @@ class If(Instruction):
 
     def __str__(self, counter=0):
         self.indent = self.indent * counter
-        return self.indent + "if " + str(self.condition) + " != 0:\n" \
-               + self.yes.__str__(counter + 1)  \
-               + "\n" + self.indent + "else:\n" \
-               + self.no.__str__(counter + 1)
+        return self.indent + "if " + str(self.condition) + " != 0:\n" +\
+            self.yes.__str__(counter + 1) + \
+            "\n" + self.indent + "else:\n" + \
+            self.no.__str__(counter + 1)

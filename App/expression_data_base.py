@@ -1,14 +1,9 @@
-import sys
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import sessionmaker
-import argparse
 from sqlalchemy.orm.mapper import validates
-from sqlalchemy.engine import Engine
-from sqlalchemy import event
 from expression_formatter import decode_expression
-# Event for handling cascade DELETE of foreign keys.
 
 Base = declarative_base()
 
@@ -27,7 +22,7 @@ class ArithmeticExpression(Base):
     def validate_expression_encoding(self, key, value):
         assert value is not None
         assert self.session is not None
-        for row in self.session.query(ArithmeticExpression):            
+        for row in self.session.query(ArithmeticExpression):
             if str(row.expression_encoding) == str(value):
                 assert False
 
@@ -48,7 +43,7 @@ class ProgrammingExpression(Base):
     def validate_expression_encoding(self, key, value):
         assert value is not None
         assert self.session is not None
-        for row in self.session.query(ProgrammingExpression):            
+        for row in self.session.query(ProgrammingExpression):
             if(str(row.expression_encoding) == str(value)):
                 assert False
 
@@ -56,7 +51,8 @@ class ProgrammingExpression(Base):
 
 
 def init():
-    engine = create_engine("sqlite:////tmp/temp.db", connect_args={'check_same_thread': False})
+    engine = create_engine("sqlite:////tmp/temp.db",
+                           connect_args={'check_same_thread': False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     current_session = Session()
@@ -95,8 +91,9 @@ def delete_arithmetic_expression(id, expression_encoding, session):
     if expression_encoding is None:
         expression_encoding = ArithmeticExpression.expression_encoding
 
-    session.query(ArithmeticExpression).filter_by(id=id,
-                                                  expression_encoding=expression_encoding).delete()
+    session.query(ArithmeticExpression). \
+        filter_by(id=id,
+                  expression_encoding=expression_encoding).delete()
     return session
 
 
@@ -106,18 +103,19 @@ def delete_arithmetic_expression(id, expression_encoding, session):
     if expression_encoding is None:
         expression_encoding = ProgrammingExpression.expression_encoding
 
-    session.query(ProgrammingExpression).filter_by(id=id,
-                                                   expression_encoding=expression_encoding).delete()
+    session.query(ProgrammingExpression). \
+        filter_by(id=id,
+                  expression_encoding=expression_encoding).delete()
     return session
 
-def get_expressions_from_data_base(session, q):    
+
+def get_expressions_from_data_base(session, q):
     expressions = []
 
     for row in session.query(ArithmeticExpression):
-        e = decode_expression(row.expression_encoding)        
+        e = decode_expression(row.expression_encoding)
         expressions.append(e)
-    for row in session.query(ProgrammingExpression):        
-        e = decode_expression(row.expression_encoding)        
+    for row in session.query(ProgrammingExpression):
+        e = decode_expression(row.expression_encoding)
         expressions.append(e)
     q.put(expressions)
-    
