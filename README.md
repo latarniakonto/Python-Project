@@ -1,3 +1,11 @@
+# Expression game
+
+
+<p>
+    <img src="https://i.imgur.com/NPrfg9n.png" width="400" height="300" />
+    <img src="https://i.imgur.com/GMvmSKf.png" width="400" height="300" />
+</p>
+
 ## Requirements
 To run this game you have to install the following pip3 packages:
 *sqlalchemy* and *pygame*
